@@ -1,0 +1,1 @@
+import {Router} from "express";import {checkIn,checkOut,createBooking,studentBookings} from "../controllers/bookingController.js";const r=Router();r.post("/",createBooking);r.get("/student/:id",studentBookings);r.patch("/:id/check-in",checkIn);r.patch("/:id/check-out",checkOut);export default r;

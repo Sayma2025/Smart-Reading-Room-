@@ -1,0 +1,4 @@
+import crypto from "node:crypto"; import User from "../models/User.js";
+const session=user=>({token:crypto.randomBytes(32).toString("hex"),user:{id:user._id,name:user.name,email:user.email,role:user.role}});
+export const signup=async(req,res,next)=>{try{const {name,email,password}=req.body;if(!name||!email||!password||password.length<6)return res.status(400).json({message:"Name, email and a 6-character password are required"});if(await User.findOne({email}))return res.status(400).json({message:"Email already registered"});res.status(201).json(session(await User.create({name,email,...User.passwordFields(password)})))}catch(e){next(e)}};
+export const login=async(req,res,next)=>{try{const u=await User.findOne({email:req.body.email});if(!u||!u.matchPassword(req.body.password))return res.status(401).json({message:"Invalid email or password"});res.json(session(u))}catch(e){next(e)}};

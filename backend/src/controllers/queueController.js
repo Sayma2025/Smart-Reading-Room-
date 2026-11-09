@@ -1,0 +1,2 @@
+import QueueEntry from "../models/QueueEntry.js";
+export const joinQueue=async(req,res,next)=>{try{const {studentId}=req.body;if(!studentId)return res.status(400).json({message:"studentId is required"});if(await QueueEntry.findOne({studentId,status:{$in:["waiting","offered"]}}))return res.status(400).json({message:"You are already in queue"});const entry=await QueueEntry.create({studentId});const position=await QueueEntry.countDocuments({status:"waiting",createdAt:{$lte:entry.createdAt}});res.status(201).json({entry,position,estimatedMinutes:position*15})}catch(e){next(e)}};
